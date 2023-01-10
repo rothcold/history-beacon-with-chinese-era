@@ -1,10 +1,17 @@
 <script lang="ts">
-  let eraData = [];
+  const dynasties = ["秦", "西汉"];
+  let eraData = {};
 
   const initData = async () => {
-    const resp = await fetch("/data.json");
+    dynasties.forEach((dynasty) => {
+      initDynasty(dynasty);
+    });
+  };
+
+  const initDynasty = async (dynasty: string) => {
+    const resp = await fetch(`/data/${dynasty}.json`);
     const data = await resp.json();
-    eraData = data.data;
+    eraData[dynasty] = data.data;
   };
   initData();
 </script>
@@ -12,15 +19,19 @@
 <main>
   <div class="container">
     <table class="era-table" cellspacing="0">
-      {#each eraData as era}
-        <tr>
-          <td> {era.era}</td>
-          <td>
-            {#each era.events as event}
-              <div>{event}</div>
-            {/each}
-          </td>
-        </tr>
+      {#each dynasties as dynasty}
+        {#if dynasty in eraData}
+          {#each eraData[dynasty] as era}
+            <tr>
+              <td> {era.era}</td>
+              <td>
+                {#each era.events as event}
+                  <div>{event}</div>
+                {/each}
+              </td>
+            </tr>
+          {/each}
+        {/if}
       {/each}
     </table>
   </div>
