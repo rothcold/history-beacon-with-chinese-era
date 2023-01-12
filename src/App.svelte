@@ -1,58 +1,42 @@
 <script lang="ts">
+  import qinData from "./data/秦.json";
   const dynasties = ["秦", "西汉"];
-  let eraData = {};
-
-  const initData = async () => {
-    dynasties.forEach((dynasty) => {
-      initDynasty(dynasty);
-    });
-  };
-
-  const initDynasty = async (dynasty: string) => {
-    const resp = await fetch(`/data/${dynasty}.json`);
-    const data = await resp.json();
-    eraData[dynasty] = data.data;
-  };
-  initData();
 </script>
 
 <main>
   <div class="container">
-    <table class="era-table" cellspacing="0">
-      {#each dynasties as dynasty}
-        {#if dynasty in eraData}
-          {#each eraData[dynasty] as era}
-            <tr>
-              <td> {era.era}</td>
-              <td>
-                {#each era.events as event}
-                  <div>{event}</div>
-                {/each}
-              </td>
-            </tr>
-          {/each}
-        {/if}
-      {/each}
-    </table>
+    {#each qinData.data as era}
+      {#if era.events.length > 0}
+        <div class="era-entry">
+          <div class="era-name">
+            {era.era}
+          </div>
+          <div class="era-events">
+            {#each era.events as event}
+              <div>{event}</div>
+            {/each}
+          </div>
+        </div>
+      {/if}
+    {/each}
   </div>
 </main>
 
-<style>
+<style lang="scss">
   .container {
     width: 100%;
+    min-height: 100vh;
   }
-  .era-table {
-    width: 100%;
-    padding: 3%;
-  }
-
-  .era-table > tr > td:nth-child(odd) {
-    width: 20%;
-    vertical-align: top;
-    border-right: black 1px solid;
-  }
-  .era-table > tr > td:nth-child(even) {
-    width: 80%;
-    padding-left: 5%;
+  .era-entry {
+    display: flex;
+    .era-name {
+      width: 30%;
+      text-align: right;
+      border-top: solid 1px;
+      border-right: solid 1px;
+    }
+    .era-events {
+      width: 70%;
+    }
   }
 </style>
